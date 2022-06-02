@@ -1,60 +1,55 @@
-const input = document.getElementById('input');
-const grid = document.getElementsByClassName('grid')[0];
+dayNightTheme = () => {
+    let date = new Date();
+    let hour = date.getHours();
 
-// window.addEventListener('load',dayNightMode)
+    if (hour >= 7 && hour < 19) {
+        document.body.style.backgroundColor = 'white';
+        document.body.style.color = 'black';
+    } else {
+        document.body.style.backgroundColor = 'black';
+        document.body.style.color = 'white';
+    }
+}
 
-input.addEventListener('keydown', function (event) {
-    if (event.key === 'enter')
-        loadImg();
-})
+// window.addEventListener('load', dayNightTheme);
 
-function loadImg() {
-    removeImages();
+document.querySelector("#input").addEventListener("keydown", (event) => {
+    if (event.key == "Enter")
+        apiRequest();
+});
 
-    const url = 'https://api.unsplash.com/search/photos?query=' + input.value + '&per_page=9&client_id=6H9w37lzD4XXUcEwaas4n7Q_9kb3tvVmrQkWGA88K5E';
+document.querySelector("#search").addEventListener("click", () => {
+    apiRequest();
+});
+
+apiRequest = () => {
+
+    document.querySelector("#grid").textContent = "";
+
+    const url = 'https://api.unsplash.com/search/photos?query=' + input.value + '&per_page=15&client_id=6H9w37lzD4XXUcEwaas4n7Q_9kb3tvVmrQkWGA88K5E';
 
     fetch(url)
 
         .then(response => {
-            if (response.ok)
-                return response.json();
-            else
-                alert(response.status)
+            if (!response.ok) throw Error(response.statusText);
+            return response.json();
         })
 
-        .then(data =>{
-            const imageNodes =[];
-            for(let  i = 0; i < data.results.length; i++){
-                imageNodes[i] = document.createElement('div');
-                imageNodes[i].class ='img';
-                imageNodes[i].style.backgroundImage ='url('+data.results[i].urls.raw+')';
-                imageNodes[i].addEventListener("dblclick", function(){
-                    window.open(data.results[i].links.download, '_blank');
+        .then(data => {
+            loadImages(data);
+        })
 
-            })
-
-            grid.appendChild(imageNodes[i]);
-        }      
-    
-})
+        .catch(error => console.log(error));
 }
 
-function removeImages() {
-    grid.innerHTML = '';
+loadImages = (data) => {
+    for (let i = 0; i < data.results.length; i++) {
+        let image = document.createElement("div");
+        image.className = "img";
+        image.style.backgroundImage = "url(" + data.results[i].urls.raw + "&w=1366&h=768" + ")";
+        image.addEventListener("dblclick", function () {
+            window.open(data.results[i].links.download, '_blank');
+        })
+        document.querySelector("#grid").appendChild(image);
+    }
 }
-
-
-// Day Night Mode
-
-// function dayNightMode() {
-//     const date = new Date();
-//     const hour = date.getHours();
-
-//     if (hour >= 7 && hour <= 19) {
-//         document.body.style.backgroundColor = 'whitesmoke';
-//         document.body.style.color = 'black';
-//     } else {
-//         document.body.style.backgroundColor = 'black';
-//         document.body.style.color = 'whitesmoke';
-//     }
-// }
