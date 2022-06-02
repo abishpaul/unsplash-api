@@ -62,7 +62,7 @@ input {
 }
 
 #search_box i {
-    color: black;
+    color: rgb(63, 61, 61);
     position: absolute;
     cursor: pointer;
     top: 25%;
@@ -131,6 +131,6 @@ input {
     }
 
     #search_box input {
-        font-size: .7rem;
+        font-size: 1rem;
     }
 }
